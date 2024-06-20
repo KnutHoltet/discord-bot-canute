@@ -11,10 +11,13 @@ import io.ktor.serialization.gson.*
 import java.net.http.HttpResponse
 import java.time.Clock
 import kotlinx.datetime.*
+import io.ktor.client.plugins.websocket.*
 
 
 class Client {
     private val client = HttpClient(CIO) {
+        // install(WebSockets)
+
         install(ContentNegotiation) {
             gson()
         }
@@ -23,6 +26,7 @@ class Client {
             header(HttpHeaders.Authorization, "Bot $botToken")
         }
     }
+
 
     // r = requests.post(url, headers=headers, json=json)
     suspend fun makeCommand() {
@@ -34,9 +38,9 @@ class Client {
             contentType(ContentType.Application.Json)
             setBody(
                 ChatCommand(
-                    "hei-command",
+                    "hade-command",
                     1,
-                    "desc"
+                    "kommando for å si hade"
                 )
             )
         }
@@ -44,6 +48,7 @@ class Client {
         println("Response: ${response.bodyAsText()}")
 
     }
+
 
 }
 
