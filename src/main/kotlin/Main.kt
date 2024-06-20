@@ -4,6 +4,7 @@ import dev.kord.common.entity.Snowflake
 import dev.kord.common.ratelimit.IntervalRateLimiter
 import dev.kord.core.Kord
 import dev.kord.core.behavior.channel.MessageChannelBehavior
+import dev.kord.core.behavior.interaction.respondPublic
 import dev.kord.core.behavior.interaction.response.respond
 import dev.kord.core.entity.Message
 import dev.kord.core.entity.application.GlobalApplicationCommand
@@ -53,11 +54,18 @@ suspend fun main(args: Array<String>) {
     val kord = Kord(token)
 
 
+    /* TODO:
+    *   legge inn for server kommandoer
+    * https://dokka.kord.dev/core/dev.kord.core/-kord/index.html
+    * guild applications
+    * */
     kord.on<ChatInputCommandInteractionCreateEvent> {
        if(interaction.command.rootName == "hei-command") {
            interaction.deferEphemeralResponse().respond {
                content = "hei"
            }
+
+           println(interaction.getChannel().id)
        }
     }
 
