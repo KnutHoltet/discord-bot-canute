@@ -1,4 +1,5 @@
 import Headers
+import dev.kord.rest.request.KtorRequestHandler
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
@@ -8,6 +9,9 @@ import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.gson.*
 import java.net.http.HttpResponse
+import java.time.Clock
+import kotlinx.datetime.*
+
 
 class Client {
     private val client = HttpClient(CIO) {
@@ -36,11 +40,11 @@ class Client {
                 )
             )
         }
-
         println("Response status: ${response.status.value}")
         println("Response: ${response.bodyAsText()}")
 
     }
+
 }
 
 data class ChatCommand(
