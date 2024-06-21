@@ -1,5 +1,3 @@
-import Headers
-import dev.kord.rest.request.KtorRequestHandler
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
@@ -8,10 +6,6 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.gson.*
-import java.net.http.HttpResponse
-import java.time.Clock
-import kotlinx.datetime.*
-import io.ktor.client.plugins.websocket.*
 
 
 class Client {
@@ -29,8 +23,11 @@ class Client {
 
 
     // r = requests.post(url, headers=headers, json=json)
-    suspend fun makeCommand() {
+    suspend fun makeSlashCommandGlobal(name: String, description: String) {
         // id : 1250137286260297822
+
+        // denne er satt til ultimat lesergruppe design id så den lager kun kommandoer for den serveren
+        // se https://discord.com/developers/docs/interactions/application-commands#slash-commands
 
         val url = "https://discord.com/api/v10/applications/1250137286260297822/commands"
 
@@ -38,14 +35,34 @@ class Client {
             contentType(ContentType.Application.Json)
             setBody(
                 ChatCommand(
-                    "hade-command",
+                    name,
                     1,
-                    "kommando for å si hade"
+                    description
                 )
             )
         }
         println("Response status: ${response.status.value}")
         println("Response: ${response.bodyAsText()}")
+
+    }
+
+    suspend fun makeSlashCommandGuild(name: String, description: String, guildId: String) {
+        val url = "https://discord.com/api/v10/applications/1250137286260297822/guilds/$guildId/commands"
+
+        val response = client.post(url) {
+            contentType(ContentType.Application.Json)
+            setBody(
+                ChatCommand(
+                    name,
+                    1,
+                    description
+                )
+            )
+        }
+        println("Response status: ${response.status.value}")
+        println("Response: ${response.bodyAsText()}")
+
+
 
     }
 
