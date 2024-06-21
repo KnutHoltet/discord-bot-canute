@@ -8,6 +8,7 @@ import dev.kord.core.behavior.interaction.respondPublic
 import dev.kord.core.behavior.interaction.response.respond
 import dev.kord.core.entity.Message
 import dev.kord.core.entity.application.GlobalApplicationCommand
+import dev.kord.core.entity.channel.thread.TextChannelThread
 import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
 import dev.kord.core.gateway.start
 import dev.kord.core.on
@@ -22,11 +23,9 @@ import io.ktor.client.*
 import io.ktor.client.plugins.websocket.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlin.reflect.typeOf
 import kotlin.time.Duration.Companion.seconds
 
 
@@ -65,7 +64,8 @@ suspend fun main(args: Array<String>) {
                content = "hei"
            }
 
-           println(interaction.getChannel().id)
+           //println(interaction.getChannel().id)
+           countMessages(interaction.getChannel().id, kord)
        }
     }
 
@@ -109,6 +109,21 @@ suspend fun main(args: Array<String>) {
     *  */
 
     println(guildService.getGuildChannels(guild.id))
+}
+
+suspend fun countMessages(channelId: Snowflake, kord: Kord): String {
+    val channel = kord.getChannel(channelId)
+    val textChannelThread = TextChannelThread(channel!!.data, channel.kord, channel.supplier)
+
+    val lastMsg = channel.data.lastMessageId!!.value!!
+
+    println("lastMessageId er .. ${channel.data.lastMessageId!!.value!!}")
+    println("lastMessageId er .. ${channel.data.lastMessageId!!.value!!.value}")
+    println("lastMsg typing er .. ${lastMsg.javaClass.name}")
+
+    val messageCount = textChannelThread.getMessagesBefore(lastMsg)
+    println("channel count er ... ${messageCount.count()}}")
+    return "1"
 }
 
 
