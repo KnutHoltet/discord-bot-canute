@@ -1,64 +1,35 @@
+import bot.Bot
+import bot.Client
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
-import dev.kord.core.behavior.channel.MessageChannelBehavior
 import dev.kord.core.behavior.interaction.response.respond
-import dev.kord.core.entity.Message
 import dev.kord.core.entity.channel.thread.TextChannelThread
 import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
 import dev.kord.core.on
-import dev.kord.core.supplier.EntitySupplier
 import dev.kord.core.supplier.RestEntitySupplier
 import dev.kord.rest.request.KtorRequestHandler
-import dev.kord.rest.service.RestClient
 import dev.kord.rest.service.*
+import interactions.ChatInputCommandInteraction
+import interactions.MyChannel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 
-class MyChannel(
-    override val kord: Kord,
-    override val id: Snowflake,
-    override val supplier: EntitySupplier
-) : MessageChannelBehavior {
-
-    override suspend fun createMessage(content: String): Message {
-        return super.createMessage(content)
-    }
-}
-
 
 suspend fun main(args: Array<String>) {
     // val token = args.firstOrNull() ?: error("token required")
     val token = botToken
-    val rest = RestClient(KtorRequestHandler(token))
-    val username = rest.user.getCurrentUser().username
-
-    println(rest.user.getCurrentUser().id)
-    println("using $username's token")
+    val bot = Bot(token)
+    bot.initialize()
 
     val kord = Kord(token)
+    val restEntitySupplier = RestEntitySupplier(kord)
 
-    val sup = RestEntitySupplier(kord)
+    val interactions = ChatInputCommandInteraction(kord)
+    interactions.helloCommand()
 
-
-    /* TODO:
-    *   legge inn for server kommandoer
-    * https://dokka.kord.dev/core/dev.kord.core/-kord/index.html
-    * guild applications
-    * */
-    // this is for global command hei
-    kord.on<ChatInputCommandInteractionCreateEvent> {
-       if(interaction.command.rootName == "hei-command") {
-           interaction.deferEphemeralResponse().respond {
-               content = "hei"
-           }
-
-           //println(interaction.getChannel().id)
-           countMessages(interaction.getChannel().id, kord)
-       }
-    }
 
     // we need to make a command for guild countThisChannel
     kord.on<ChatInputCommandInteractionCreateEvent> {
@@ -70,11 +41,24 @@ suspend fun main(args: Array<String>) {
 
             val chanId = interaction.getChannel().id
 
-            val chan = MyChannel(kord, chanId, sup)
+            val chan = MyChannel(kord, chanId, restEntitySupplier)
+            println(chan)
+            println(antMsg)
             chan.createMessage(antMsg)
             //println(interaction.getChannel().id)
         }
     }
+
+
+    // we need to make a command for guild countThisChannel
+    kord.on<ChatInputCommandInteractionCreateEvent> {
+        if(interaction.command.rootName == "test") {
+            interaction.deferEphemeralResponse().respond {
+                content = "test"
+            }
+        }
+    }
+
 
 
     CoroutineScope(Dispatchers.Default).launch {
@@ -83,10 +67,8 @@ suspend fun main(args: Array<String>) {
 
 
 
-
-
     // Canute's server channel id
-    val chan = MyChannel(kord, Snowflake(1250138523957330026), sup)
+    val chan = MyChannel(kord, Snowflake(1250138523957330026), restEntitySupplier)
     chan.createMessage("hade")
 
     /*TODO:
@@ -100,10 +82,7 @@ suspend fun main(args: Array<String>) {
 
     val guild = kord.getGuild(serverId)
 
-    // println(server)
 
-    val c = Client()
-    c.makeSlashCommandGlobal("count-command", "Counts the messages in current channel")
 
 
     // val guildChannels = getGuildChannels(guild.id)
