@@ -21,6 +21,15 @@ class ChatInputCommandInteraction(
 
     /* COUNTING COMMANDS */
     fun countCommand(commandName: String, interactionContent: String) {
+
+        /* TODO
+        *   FIX SO THAT CACHE TAKES INTO ACCOUNT CHANNEL
+        *
+        *   Right now if you use count-command in one channel, it will add that to the cache for every
+        *   other count. Need to add functionality into CountedChannelsCache
+        * */
+
+
         kord.on<ChatInputCommandInteractionCreateEvent> {
             if(interaction.command.rootName == commandName) {
                 interaction.deferEphemeralResponse().respond {

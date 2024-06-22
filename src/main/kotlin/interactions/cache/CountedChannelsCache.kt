@@ -1,5 +1,5 @@
 package interactions.cache
 
-object CountedChannels {
+object CountedChannelsCache {
 
 }
