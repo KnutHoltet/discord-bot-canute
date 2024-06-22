@@ -25,7 +25,10 @@ class ChatInputCommandInteraction(
 
     /* COUNTING COMMANDS */
     fun countCommand() {
-        /* TODO: Add caching */
+        /* TODO:
+        *   - Add caching
+        *   - getMessagesAfter : kord standard library
+        * */
         chatInputCommandCreateEvent("count-command", "Meldingene kommer strats!") {
 
 
