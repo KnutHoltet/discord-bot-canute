@@ -21,16 +21,15 @@ import kotlinx.coroutines.launch
 suspend fun main(args: Array<String>) {
     // val token = args.firstOrNull() ?: error("token required")
     val token = botToken
-    val bot = Bot(token)
+    val kord = Kord(token)
+    val bot = Bot(token, kord)
+
     bot.initialize()
 
-    val kord = Kord(token)
-    val restEntitySupplier = RestEntitySupplier(kord)
 
     val interactions = ChatInputCommandInteraction(kord)
     interactions.helloCommand()
-
-
+    interactions.countCommand("count-command", "Kommer nå ... ")
 
 
     // we need to make a command for guild countThisChannel
@@ -42,17 +41,11 @@ suspend fun main(args: Array<String>) {
         }
     }
 
-
-
     CoroutineScope(Dispatchers.Default).launch {
         kord.login()
     }
 
 
-
-    // Canute's server channel id
-    val chan = MyChannel(kord, Snowflake(1250138523957330026), restEntitySupplier)
-    chan.createMessage("hade")
 
     /*TODO:
     *  ultimate leser gruppe id for now, get this id from a get call
@@ -81,20 +74,6 @@ suspend fun main(args: Array<String>) {
     println(guildService.getGuildChannels(guild.id))
 }
 
-suspend fun countMessages(channelId: Snowflake, kord: Kord): String {
-    val channel = kord.getChannel(channelId)
-    val textChannelThread = TextChannelThread(channel!!.data, channel.kord, channel.supplier)
-
-    val lastMsg = channel.data.lastMessageId!!.value!!
-
-    println("lastMessageId er .. ${channel.data.lastMessageId!!.value!!}")
-    println("lastMessageId er .. ${channel.data.lastMessageId!!.value!!.value}")
-    println("lastMsg typing er .. ${lastMsg.javaClass.name}")
-
-    val messageCount = textChannelThread.getMessagesBefore(lastMsg)
-    println("channel count er ... ${messageCount.count()}}")
-    return "${messageCount.count() + 1}"
-}
 
 
 

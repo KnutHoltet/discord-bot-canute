@@ -18,7 +18,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class Bot(
-    private val token: String
+    private val token: String,
+    private val kord: Kord
 ){
     private val rest = RestClient(KtorRequestHandler(token))
 
