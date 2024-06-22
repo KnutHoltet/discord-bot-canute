@@ -31,23 +31,6 @@ suspend fun main(args: Array<String>) {
     interactions.helloCommand()
 
 
-    // we need to make a command for guild countThisChannel
-    kord.on<ChatInputCommandInteractionCreateEvent> {
-        if(interaction.command.rootName == "count-command") {
-            interaction.deferEphemeralResponse().respond {
-                content = "kommer nå botten min er treg bare"
-            }
-            val antMsg = countMessages(interaction.getChannel().id, kord)
-
-            val chanId = interaction.getChannel().id
-
-            val chan = MyChannel(kord, chanId, restEntitySupplier)
-            println(chan)
-            println(antMsg)
-            chan.createMessage(antMsg)
-            //println(interaction.getChannel().id)
-        }
-    }
 
 
     // we need to make a command for guild countThisChannel

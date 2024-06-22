@@ -4,6 +4,7 @@ import dev.kord.core.Kord
 import dev.kord.core.behavior.interaction.response.respond
 import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
 import dev.kord.core.on
+import interactions.cache.CountedMessagesCache
 import kotlinx.serialization.json.JsonNull.content
 
 class ChatInputCommandInteraction(
@@ -25,7 +26,32 @@ class ChatInputCommandInteraction(
     /* COUNTING COMMANDS */
     fun countCommand() {
         /* TODO: Add caching */
+        chatInputCommandCreateEvent("count-command", "Meldingene kommer strats!") {
+
+
+        }
     }
+
+    /*
+    // we need to make a command for guild countThisChannel
+    kord.on<ChatInputCommandInteractionCreateEvent> {
+        if(interaction.command.rootName == "count-command") {
+            interaction.deferEphemeralResponse().respond {
+                content = "kommer nå botten min er treg bare"
+            }
+
+            val antMsg = countMessages(interaction.getChannel().id, kord)
+
+            val chanId = interaction.getChannel().id
+
+            val chan = MyChannel(kord, chanId, restEntitySupplier)
+            println(chan)
+            println(antMsg)
+            chan.createMessage(antMsg)
+            //println(interaction.getChannel().id)
+        }
+    }
+     */
 
     fun countAllChannels() {
         /* TODO: Add caching */
