@@ -22,6 +22,9 @@ class ChatInputCommandInteraction(
 
     /* COUNTING COMMANDS */
     fun countCommand(commandName: String, interactionContent: String) {
+        /* TODO replace deprecated ChatInputCommandInteractionCreateEvent
+        *    se : https://dokka.kord.dev/core/dev.kord.core.event.interaction/-chat-input-command-interaction-create-event/index.html
+        * */
 
         kord.on<ChatInputCommandInteractionCreateEvent> {
             if(interaction.command.rootName == commandName) {
@@ -88,6 +91,7 @@ class ChatInputCommandInteraction(
     fun getRandomMemeGif() {}
 
     /* TEST COMMAND */
+
     fun testCommand(commandName: String, interactionContent: String) {
         kord.on<ChatInputCommandInteractionCreateEvent> {
             if(interaction.command.rootName == commandName) {
