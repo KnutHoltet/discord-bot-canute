@@ -34,15 +34,12 @@ class Bot(
         setupCommands(client)
     }
 
+    /* I think the issue lies in this function, not sure why */
     private suspend fun setupCommands(client: Client) {
         // Creating Global commands - NOTE: these takes time to load into effect on Discord
-
-        client.makeSlashCommandGuild("test-command", "test command", "1013799473983520859")
         client.makeSlashCommandGlobal("count-command", "Counts the messages in current channel")
-        // client.makeSlashCommandGlobal("test", "test command")
 
         // Creating Server specific commands - NOTE: these are quick to effect and can be used for testing
-        // client.makeSlashCommandGuild("test", "test command", "1013799473983520859")
-
+        client.makeSlashCommandGuild("test3", "test command", "1013799473983520859")
     }
 }

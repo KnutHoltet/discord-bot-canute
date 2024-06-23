@@ -33,7 +33,6 @@ class ChatInputCommandInteraction(
             val chanId = interaction.getChannel().id
             val channelForText = MyChannel(kord, chanId, restEntitySupplier)
 
-
             if(chanId !in countedChannelsCache.countedChannelMessages) {
 
                 /* Caching... */
@@ -59,6 +58,7 @@ class ChatInputCommandInteraction(
                 countedChannelsCache.countedChannelMessages[chanId] = countedChannelsCache.countedChannelMessages[chanId]!! + antMsg
                 channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
             }
+
         }
     }
 
@@ -66,7 +66,7 @@ class ChatInputCommandInteraction(
         /* TODO: Add caching */
     }
 
-    /* Greetings command */
+    /* GREETINGS COMMAND */
     fun helloCommand(commandName: String, interactionContent: String) {
 
         kord.on<ChatInputCommandInteractionCreateEvent> {
@@ -95,7 +95,6 @@ class ChatInputCommandInteraction(
                     content = interactionContent
                 }
             }
-
             /*
             val chanId = interaction.getChannel().id
             val channelForEmbed = MyChannel(kord, chanId, restEntitySupplier)
