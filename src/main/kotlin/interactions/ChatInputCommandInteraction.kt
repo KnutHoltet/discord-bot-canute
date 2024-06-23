@@ -7,6 +7,7 @@ import dev.kord.core.entity.channel.thread.TextChannelThread
 import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
 import dev.kord.core.on
 import dev.kord.core.supplier.RestEntitySupplier
+import interactions.cache.CountedChannelsCache
 import interactions.cache.CountedMessagesCache
 import kotlinx.coroutines.flow.count
 
@@ -18,17 +19,10 @@ class ChatInputCommandInteraction(
     private val restEntitySupplier = RestEntitySupplier(kord)
     private var initializedCalled = false
     private val countedCache = CountedMessagesCache
+    private val countedChannelsCache = CountedChannelsCache
 
     /* COUNTING COMMANDS */
     fun countCommand(commandName: String, interactionContent: String) {
-
-        /* TODO
-        *   FIX SO THAT CACHE TAKES INTO ACCOUNT CHANNEL
-        *
-        *   Right now if you use count-command in one channel, it will add that to the cache for every
-        *   other count. Need to add functionality into CountedChannelsCache
-        * */
-
 
         kord.on<ChatInputCommandInteractionCreateEvent> {
             if(interaction.command.rootName == commandName) {
@@ -38,30 +32,30 @@ class ChatInputCommandInteraction(
             }
 
             val chanId = interaction.getChannel().id
-
             val channelForText = MyChannel(kord, chanId, restEntitySupplier)
 
-            // chan.createMessage(antMsg)
 
-            if(!initializedCalled) {
-                initializedCalled = true
-                val antMsg = countMessages(interaction.getChannel().id, kord)
+            if(chanId !in countedChannelsCache.countedChannelMessages) {
+                println("This should hypothetically be true? no?")
 
                 /* Caching... */
-                countedCache.countedMessages += antMsg
-                countedCache.messageIdOnFirstCall.add(chanId)
+                val antMsg = countMessages(interaction.getChannel().id, kord)
+                countedChannelsCache.countedChannelMessages[chanId] = antMsg // adds messages
 
-                channelForText.createMessage("Antall meldinger i kanalen: ${countedCache.countedMessages}")
+                val channel = kord.getChannel(chanId)
+                val lastMsg = channel?.data?.lastMessageId!!.value!!
+                countedChannelsCache.countedChannelLastIdOnCall[chanId] = lastMsg
+
+
+                channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
 
             } else {
-                val antMsg = countMessagesAfter(countedCache.messageIdOnFirstCall[0], kord)
 
+                val lastMsg = countedChannelsCache.countedChannelLastIdOnCall[chanId]!!
+                val antMsg = countMessagesAfter(chanId, kord, lastMsg)
 
-                countedCache.countedMessages += antMsg
-                countedCache.messageIdOnFirstCall.removeFirst()
-                countedCache.messageIdOnFirstCall.add(chanId)
-
-                channelForText.createMessage("Antall meldinger i kanalen: ${countedCache.countedMessages}")
+                countedChannelsCache.countedChannelMessages[chanId] = countedChannelsCache.countedChannelMessages[chanId]!! + antMsg
+                channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
             }
         }
     }
@@ -98,10 +92,9 @@ class ChatInputCommandInteraction(
         return count
     }
 
-    private suspend fun countMessagesAfter(channelId: Snowflake, kord: Kord): Int {
+    private suspend fun countMessagesAfter(channelId: Snowflake, kord: Kord, lastMsg: Snowflake): Int {
         val channel = kord.getChannel(channelId)
         val textChannelThread = TextChannelThread(channel!!.data, channel.kord, channel.supplier)
-        val lastMsg = channel.data.lastMessageId!!.value!!
 
         /* TODO: Create logs */
 
