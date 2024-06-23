@@ -26,20 +26,13 @@ suspend fun main(args: Array<String>) {
 
     bot.initialize()
 
-
     val interactions = ChatInputCommandInteraction(kord)
-    interactions.helloCommand()
+
+    // interactions.helloCommand("hei-command", "hei")
+    // interactions.countCommand("count-command", "Kommer nå ... ")
+    interactions.testCommand("test-command", "test command lolsie")
     interactions.countCommand("count-command", "Kommer nå ... ")
 
-
-    // we need to make a command for guild countThisChannel
-    kord.on<ChatInputCommandInteractionCreateEvent> {
-        if(interaction.command.rootName == "test") {
-            interaction.deferEphemeralResponse().respond {
-                content = "test"
-            }
-        }
-    }
 
     CoroutineScope(Dispatchers.Default).launch {
         kord.login()
