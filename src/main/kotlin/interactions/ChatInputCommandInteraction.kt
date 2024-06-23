@@ -54,6 +54,10 @@ class ChatInputCommandInteraction(
                 val lastMsg = countedChannelsCache.countedChannelLastIdOnCall[chanId]!!
                 val antMsg = countMessagesAfter(chanId, kord, lastMsg)
 
+                val channel = kord.getChannel(chanId)
+                val newLastMessage = channel?.data?.lastMessageId!!.value!!
+                countedChannelsCache.countedChannelLastIdOnCall[chanId] = newLastMessage
+
                 countedChannelsCache.countedChannelMessages[chanId] = countedChannelsCache.countedChannelMessages[chanId]!! + antMsg
                 channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
             }
@@ -96,10 +100,14 @@ class ChatInputCommandInteraction(
         val channel = kord.getChannel(channelId)
         val textChannelThread = TextChannelThread(channel!!.data, channel.kord, channel.supplier)
 
-        /* TODO: Create logs */
 
         val messageCount = textChannelThread.getMessagesAfter(lastMsg)
-        val count = messageCount.count() + 1
+        val count = messageCount.count()
+
+        /* TODO: Create logs */
+        // println(messageCount)
+        // println(count)
+
         return count
     }
 }
