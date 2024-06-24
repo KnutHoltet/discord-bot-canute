@@ -40,6 +40,6 @@ class Bot(
         client.makeSlashCommandGlobal("count-command", "Counts the messages in current channel")
 
         // Creating Server specific commands - NOTE: these are quick to effect and can be used for testing
-        client.makeSlashCommandGuild("test3", "test command", "1013799473983520859")
+        client.makeSlashCommandGuild("embeded", "test command for embeded", "1013799473983520859")
     }
 }

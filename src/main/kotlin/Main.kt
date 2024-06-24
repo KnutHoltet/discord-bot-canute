@@ -31,7 +31,7 @@ suspend fun main(args: Array<String>) {
     // interactions.helloCommand("hei-command", "hei")
     // interactions.countCommand("count-command", "Kommer nå ... ")
     // interactions.testCommand("test-command", "test command lolsie")
-    interactions.testCommand("test3", "this is test3")
+    interactions.testCommand("embeded", "tester embeded")
     interactions.countCommand("count-command", "Kommer nå ... ")
 
 
@@ -51,7 +51,6 @@ suspend fun main(args: Array<String>) {
     val serverId = Snowflake(canuteServer)
 
     val guild = kord.getGuild(serverId)
-
 
 
 

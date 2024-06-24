@@ -1,5 +1,6 @@
 package interactions
 
+import dev.kord.common.Color
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.behavior.channel.createEmbed
@@ -9,6 +10,7 @@ import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
 import dev.kord.core.on
 import dev.kord.core.supplier.RestEntitySupplier
 import dev.kord.rest.builder.message.EmbedBuilder
+import dev.kord.rest.builder.message.embed
 import interactions.cache.CountedChannelsCache
 import kotlinx.coroutines.flow.count
 
@@ -32,37 +34,36 @@ class ChatInputCommandInteraction(
                 interaction.deferEphemeralResponse().respond {
                     content = interactionContent
                 }
+
+                val chanId = interaction.getChannel().id
+                val channelForText = MyChannel(kord, chanId, restEntitySupplier)
+
+                if(chanId !in countedChannelsCache.countedChannelMessages) {
+
+                    /* Caching... */
+                    val antMsg = countMessages(interaction.getChannel().id, kord)
+                    countedChannelsCache.countedChannelMessages[chanId] = antMsg // adds messages
+
+                    val channel = kord.getChannel(chanId)
+                    val lastMsg = channel?.data?.lastMessageId!!.value!!
+                    countedChannelsCache.countedChannelLastIdOnCall[chanId] = lastMsg
+
+
+                    channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
+
+                } else {
+
+                    val lastMsg = countedChannelsCache.countedChannelLastIdOnCall[chanId]!!
+                    val antMsg = countMessagesAfter(chanId, kord, lastMsg)
+
+                    val channel = kord.getChannel(chanId)
+                    val newLastMessage = channel?.data?.lastMessageId!!.value!!
+                    countedChannelsCache.countedChannelLastIdOnCall[chanId] = newLastMessage
+
+                    countedChannelsCache.countedChannelMessages[chanId] = countedChannelsCache.countedChannelMessages[chanId]!! + antMsg
+                    channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
+                }
             }
-
-            val chanId = interaction.getChannel().id
-            val channelForText = MyChannel(kord, chanId, restEntitySupplier)
-
-            if(chanId !in countedChannelsCache.countedChannelMessages) {
-
-                /* Caching... */
-                val antMsg = countMessages(interaction.getChannel().id, kord)
-                countedChannelsCache.countedChannelMessages[chanId] = antMsg // adds messages
-
-                val channel = kord.getChannel(chanId)
-                val lastMsg = channel?.data?.lastMessageId!!.value!!
-                countedChannelsCache.countedChannelLastIdOnCall[chanId] = lastMsg
-
-
-                channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
-
-            } else {
-
-                val lastMsg = countedChannelsCache.countedChannelLastIdOnCall[chanId]!!
-                val antMsg = countMessagesAfter(chanId, kord, lastMsg)
-
-                val channel = kord.getChannel(chanId)
-                val newLastMessage = channel?.data?.lastMessageId!!.value!!
-                countedChannelsCache.countedChannelLastIdOnCall[chanId] = newLastMessage
-
-                countedChannelsCache.countedChannelMessages[chanId] = countedChannelsCache.countedChannelMessages[chanId]!! + antMsg
-                channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
-            }
-
         }
     }
 
@@ -99,23 +100,40 @@ class ChatInputCommandInteraction(
                 interaction.deferEphemeralResponse().respond {
                     content = interactionContent
                 }
+                /*
+                val chanId = interaction.getChannel().id
+                val channelForEmbed = MyChannel(kord, chanId, restEntitySupplier)
+                val embedBuilder = EmbedBuilder()
+                embedBuilder.image = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXgybGQyNjFkMzMybjBmY2FwazBsaDc0MjZ5ZDQyYzNqOGlmeXA3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3fQf1OEAq0iri9RC/giphy.webp"
+                channelForEmbed.createEmbed { embedBuilder.field("hei") }
+                 */
+                kord.rest.channel.createMessage(channelId = interaction.getChannel().id) {
+                    embed {
+                        title = "Test"
+                        description = "funk for faen"
+                        url = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXgybGQyNjFkMzMybjBmY2FwazBsaDc0MjZ5ZDQyYzNqOGlmeXA3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3fQf1OEAq0iri9RC/giphy.webp"
+                        color = Color(0x1ABC9C)
+                        image = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXgybGQyNjFkMzMybjBmY2FwazBsaDc0MjZ5ZDQyYzNqOGlmeXA3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3fQf1OEAq0iri9RC/giphy.webp"
+
+                        author {
+                            name = "ligma"
+                            // iconUrl = "https://i.pinimg.com/564x/d6/0b/60/d60b60df9147a88c660bc1452385c3a7.jpg"
+
+                        }
+
+                        field {
+                            name = "feild en"
+                            value = "verdi"
+                            inline = true
+                        }
+
+                        footer {
+                            text = "ligma"
+                            icon = "https://i.pinimg.com/564x/d6/0b/60/d60b60df9147a88c660bc1452385c3a7.jpg"
+                        }
+                    }
+                }
             }
-            println("testCommand commandName = $commandName")
-            /*
-            val chanId = interaction.getChannel().id
-            val channelForEmbed = MyChannel(kord, chanId, restEntitySupplier)
-
-
-            val embedBuilder = EmbedBuilder()
-            embedBuilder.image = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXgybGQyNjFkMzMybjBmY2FwazBsaDc0MjZ5ZDQyYzNqOGlmeXA3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3fQf1OEAq0iri9RC/giphy.webp"
-            channelForEmbed.createEmbed { embedBuilder.field("hei") }
-
-
-            println("Test command run-ed")
-            // channelForEmbed.createEmbed()
-             */
-            println("TEST COMMANDO FUNKER ENDELIG!")
-
         }
     }
 
