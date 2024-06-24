@@ -21,10 +21,11 @@ class ChatInputCommandInteraction(
     private val countedChannelsCache = CountedChannelsCache
 
     /* COUNTING COMMANDS */
-    fun countCommand(commandName: String, interactionContent: String) {
+    suspend fun countCommand(commandName: String, interactionContent: String) {
         /* TODO replace deprecated ChatInputCommandInteractionCreateEvent
         *    se : https://dokka.kord.dev/core/dev.kord.core.event.interaction/-chat-input-command-interaction-create-event/index.html
         * */
+        println("countCommand commandName = $commandName")
 
         kord.on<ChatInputCommandInteractionCreateEvent> {
             if(interaction.command.rootName == commandName) {
@@ -65,12 +66,12 @@ class ChatInputCommandInteraction(
         }
     }
 
-    fun countAllChannels() {
+    suspend fun countAllChannels() {
         /* TODO: Add caching */
     }
 
     /* GREETINGS COMMAND */
-    fun helloCommand(commandName: String, interactionContent: String) {
+    suspend fun helloCommand(commandName: String, interactionContent: String) {
 
         kord.on<ChatInputCommandInteractionCreateEvent> {
             if(interaction.command.rootName == commandName) {
@@ -82,7 +83,7 @@ class ChatInputCommandInteraction(
     }
 
     /* QUOTE COMMANDS */
-    fun quoteLastPerson() {}
+    suspend fun quoteLastPerson() {}
 
     /* ANIME COMMAND */
     fun getRandomAnimeGif() {}
@@ -92,13 +93,14 @@ class ChatInputCommandInteraction(
 
     /* TEST COMMAND */
 
-    fun testCommand(commandName: String, interactionContent: String) {
+    suspend fun testCommand(commandName: String, interactionContent: String) {
         kord.on<ChatInputCommandInteractionCreateEvent> {
             if(interaction.command.rootName == commandName) {
                 interaction.deferEphemeralResponse().respond {
                     content = interactionContent
                 }
             }
+            println("testCommand commandName = $commandName")
             /*
             val chanId = interaction.getChannel().id
             val channelForEmbed = MyChannel(kord, chanId, restEntitySupplier)
