@@ -1,21 +1,8 @@
-package bot
+package io.github.knutholtet.bot
 
 import dev.kord.rest.request.KtorRequestHandler
 import dev.kord.rest.service.RestClient
-import bot.Client
-import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
-import dev.kord.core.behavior.interaction.response.respond
-import dev.kord.core.entity.channel.thread.TextChannelThread
-import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
-import dev.kord.core.on
-import dev.kord.core.supplier.RestEntitySupplier
-import dev.kord.rest.service.*
-import interactions.MyChannel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 
 class Bot(
     private val token: String,

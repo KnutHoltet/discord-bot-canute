@@ -1,21 +1,14 @@
-import bot.Bot
-import bot.Client
+package io.github.knutholtet
+
+import io.github.knutholtet.bot.Bot
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
-import dev.kord.core.behavior.interaction.response.respond
-import dev.kord.core.entity.channel.thread.TextChannelThread
-import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
-import dev.kord.core.on
-import dev.kord.core.supplier.RestEntitySupplier
 import dev.kord.rest.request.KtorRequestHandler
 import dev.kord.rest.service.*
-import interactions.ChatInputCommandInteraction
-import interactions.MyChannel
+import io.github.knutholtet.interactions.ChatInputCommandInteraction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-
 
 
 suspend fun main(args: Array<String>) {

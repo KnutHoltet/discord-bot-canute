@@ -1,6 +1,6 @@
-package bot
+package io.github.knutholtet.bot
 
-import botToken
+import io.github.knutholtet.botToken
 import dev.kord.common.entity.Snowflake
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
@@ -10,7 +10,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.gson.*
-import model.ChatCommand
+import io.github.knutholtet.model.ChatCommand
 
 
 class Client(
