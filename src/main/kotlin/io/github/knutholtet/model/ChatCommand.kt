@@ -1,4 +1,4 @@
-package model
+package io.github.knutholtet.model
 
 data class ChatCommand(
     val name: String,

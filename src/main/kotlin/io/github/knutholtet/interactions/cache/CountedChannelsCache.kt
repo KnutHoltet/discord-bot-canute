@@ -1,4 +1,4 @@
-package interactions.cache
+package io.github.knutholtet.interactions.cache
 
 import dev.kord.common.entity.Snowflake
 

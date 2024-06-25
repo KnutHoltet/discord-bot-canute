@@ -1,6 +1,12 @@
 plugins {
     kotlin("jvm") version "1.9.23"
+    application
 }
+
+application {
+    mainClass = "io.github.knutholtet.MainKt"
+}
+
 
 group = "org.example"
 version = "1.0-SNAPSHOT"

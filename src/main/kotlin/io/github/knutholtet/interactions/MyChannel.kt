@@ -1,4 +1,4 @@
-package interactions
+package io.github.knutholtet.interactions
 
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
