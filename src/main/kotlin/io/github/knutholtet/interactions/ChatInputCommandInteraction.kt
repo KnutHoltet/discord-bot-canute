@@ -12,7 +12,6 @@ import dev.kord.rest.builder.message.embed
 import io.github.knutholtet.interactions.cache.CountedChannelsCache
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.count
-import kotlinx.coroutines.runBlocking
 
 class ChatInputCommandInteraction(
     private val kord: Kord
@@ -140,7 +139,28 @@ class ChatInputCommandInteraction(
                 delay(5000)
                 kord.rest.channel.editMessage(interaction.getChannel().id, messageId) {
                     embed {
-                        description = "ENDING MAUFAKA"
+                        title = "endring?"
+                        description = "funk for faen"
+                        url = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXgybGQyNjFkMzMybjBmY2FwazBsaDc0MjZ5ZDQyYzNqOGlmeXA3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3fQf1OEAq0iri9RC/giphy.webp"
+                        color = Color(0x1ABC9C)
+                        image = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXgybGQyNjFkMzMybjBmY2FwazBsaDc0MjZ5ZDQyYzNqOGlmeXA3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3fQf1OEAq0iri9RC/giphy.webp"
+
+                        author {
+                            name = "ligma"
+                            // iconUrl = "https://i.pinimg.com/564x/d6/0b/60/d60b60df9147a88c660bc1452385c3a7.jpg"
+
+                        }
+
+                        field {
+                            name = "feild en"
+                            value = "verdi"
+                            inline = true
+                        }
+
+                        footer {
+                            text = "ligma"
+                            icon = "https://i.pinimg.com/564x/d6/0b/60/d60b60df9147a88c660bc1452385c3a7.jpg"
+                        }
                     }
                 }
 
