@@ -66,8 +66,18 @@ class ChatInputCommandInteraction(
         }
     }
 
-    suspend fun countAllChannels() {
+    suspend fun countAllChannels(commandName: String, interactionContent: String) {
         /* TODO: Add caching */
+        kord.on<ChatInputCommandInteractionCreateEvent> {
+            if(interaction.command.rootName == commandName) {
+                interaction.deferEphemeralResponse().respond {
+                    content = interactionContent
+                }
+
+                println(interaction.guildLocale)
+
+            }
+        }
     }
 
     /* GREETINGS COMMAND */
