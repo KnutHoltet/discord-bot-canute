@@ -29,5 +29,7 @@ class Bot(
         // Creating Server specific commands - NOTE: these are quick to effect and can be used for testing
         client.makeSlashCommandGuild("embeded", "test command for embeded", "1013799473983520859")
         client.makeSlashCommandGuild("countall", "test command for all channels", "1013799473983520859")
+        // 1250138523332382885
+        client.makeSlashCommandGuild("countall", "test command for all channels", "1250138523332382885")
     }
 }
