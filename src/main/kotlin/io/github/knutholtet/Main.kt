@@ -1,5 +1,6 @@
 package io.github.knutholtet
 
+import io.github.knutholtet.botToken
 import io.github.knutholtet.bot.Bot
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
@@ -9,7 +10,6 @@ import io.github.knutholtet.interactions.ChatInputCommandInteraction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
 
 suspend fun main(args: Array<String>) {
     // val token = args.firstOrNull() ?: error("token required")

@@ -16,9 +16,6 @@ repositories {
 
     // Kord Snapshots Repository (Optional):
     maven("https://oss.sonatype.org/content/repositories/snapshots")
-
-
-
 }
 
 dependencies {
