@@ -26,7 +26,7 @@ suspend fun main(args: Array<String>) {
     // interactions.testCommand("test-command", "test command lolsie")
     interactions.testCommand("embeded", "tester embeded")
     interactions.countCommand("count-command", "Kommer nå ... ")
-    interactions.countAllChannels("countAllChannels", "count command")
+    interactions.countAllChannels("countall", "count command")
 
 
     CoroutineScope(Dispatchers.Default).launch {
