@@ -1,6 +1,7 @@
 package io.github.knutholtet.interactions
 
 import dev.kord.common.Color
+import dev.kord.common.entity.ChannelType
 import dev.kord.common.entity.Snowflake
 import dev.kord.core.Kord
 import dev.kord.core.behavior.interaction.response.respond
@@ -9,6 +10,9 @@ import dev.kord.core.event.interaction.ChatInputCommandInteractionCreateEvent
 import dev.kord.core.on
 import dev.kord.core.supplier.RestEntitySupplier
 import dev.kord.rest.builder.message.embed
+import dev.kord.rest.request.KtorRequestHandler
+import dev.kord.rest.service.GuildService
+import io.github.knutholtet.botToken
 import io.github.knutholtet.interactions.cache.CountedChannelsCache
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.count
@@ -20,6 +24,8 @@ class ChatInputCommandInteraction(
 
     private val restEntitySupplier = RestEntitySupplier(kord)
     private val countedChannelsCache = CountedChannelsCache
+    private val ktorRequestHandler = KtorRequestHandler(botToken)
+    private val guildService = GuildService(ktorRequestHandler)
 
     /* COUNTING COMMANDS */
     suspend fun countCommand(commandName: String, interactionContent: String) {
@@ -35,33 +41,8 @@ class ChatInputCommandInteraction(
                 }
 
                 val chanId = interaction.getChannel().id
-                val channelForText = MyChannel(kord, chanId, restEntitySupplier)
+                counting(chanId, true)
 
-                if(chanId !in countedChannelsCache.countedChannelMessages) {
-
-                    /* Caching... */
-                    val antMsg = countMessages(interaction.getChannel().id, kord)
-                    countedChannelsCache.countedChannelMessages[chanId] = antMsg // adds messages
-
-                    val channel = kord.getChannel(chanId)
-                    val lastMsg = channel?.data?.lastMessageId!!.value!!
-                    countedChannelsCache.countedChannelLastIdOnCall[chanId] = lastMsg
-
-
-                    channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
-
-                } else {
-
-                    val lastMsg = countedChannelsCache.countedChannelLastIdOnCall[chanId]!!
-                    val antMsg = countMessagesAfter(chanId, kord, lastMsg)
-
-                    val channel = kord.getChannel(chanId)
-                    val newLastMessage = channel?.data?.lastMessageId!!.value!!
-                    countedChannelsCache.countedChannelLastIdOnCall[chanId] = newLastMessage
-
-                    countedChannelsCache.countedChannelMessages[chanId] = countedChannelsCache.countedChannelMessages[chanId]!! + antMsg
-                    channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
-                }
             }
         }
     }
@@ -74,7 +55,32 @@ class ChatInputCommandInteraction(
                     content = interactionContent
                 }
 
-                println(interaction.guildLocale)
+                val guildId = interaction.data.guildId.value!!
+                /* TODO:
+                    Go through and find text channels, then call count command on each individual text channel
+                    make a private count command that takes channelId
+
+                    update realtime as each channel get's counted
+
+                    maby have a create embeded, and then an edit embeded function
+                 */
+                val channels = guildService.getGuildChannels(guildId)
+
+                val textChannels = channels.filter { guildChannel ->
+                    guildChannel.type == ChannelType.GuildText
+                }
+
+                textChannels.forEach{ guildChannel ->
+                    counting(guildChannel.id, false)
+                    // println(guildChannel)
+                }
+
+                println("worked!")
+
+                countedChannelsCache.countedChannelName.forEach{id, name->
+                    println("name: $name and amountOfmsg: ${countedChannelsCache.countedChannelMessages[id]}")
+
+                }
 
             }
         }
@@ -190,7 +196,7 @@ class ChatInputCommandInteraction(
         // println("lastMsg typing er .. ${lastMsg.javaClass.name}")
 
         val messageCount = textChannelThread.getMessagesBefore(lastMsg)
-        val count = messageCount.count() + 1
+        val count = messageCount.count()
         return count
     }
 
@@ -208,5 +214,51 @@ class ChatInputCommandInteraction(
         // println(count)
 
         return count
+    }
+
+    private suspend fun counting(chanId: Snowflake, singleChannel: Boolean) {
+        /* TODO: create logs */
+        println("Entered counting")
+        val channelForText = MyChannel(kord, chanId, restEntitySupplier)
+
+        if(chanId !in countedChannelsCache.countedChannelMessages) {
+
+            /* Caching... */
+            val antMsg = countMessages(chanId, kord)
+            countedChannelsCache.countedChannelMessages[chanId] = antMsg // adds messages
+
+            val channel = kord.getChannel(chanId)
+
+            // TODO: Fjern
+            println()
+
+            val lastMsg = channel?.data?.lastMessageId!!.value!!
+            countedChannelsCache.countedChannelLastIdOnCall[chanId] = lastMsg
+
+
+            if(singleChannel) {
+                channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
+            }
+
+            countedChannelsCache.countedChannelName[chanId] = channel.data.name.value.toString()
+            /* TODO: Add to hashmap */
+
+        } else {
+
+            val lastMsg = countedChannelsCache.countedChannelLastIdOnCall[chanId]!!
+            val antMsg = countMessagesAfter(chanId, kord, lastMsg)
+
+            val channel = kord.getChannel(chanId)
+            val newLastMessage = channel?.data?.lastMessageId!!.value!!
+            countedChannelsCache.countedChannelLastIdOnCall[chanId] = newLastMessage
+
+            countedChannelsCache.countedChannelMessages[chanId] = countedChannelsCache.countedChannelMessages[chanId]!! + antMsg
+
+            /* TODO: Refactor */
+            if(singleChannel) {
+                channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
+            }
+        }
+
     }
 }
