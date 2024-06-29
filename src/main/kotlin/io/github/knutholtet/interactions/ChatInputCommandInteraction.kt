@@ -41,37 +41,8 @@ class ChatInputCommandInteraction(
                 }
 
                 val chanId = interaction.getChannel().id
-                val channelForText = MyChannel(kord, chanId, restEntitySupplier)
+                counting(chanId, true)
 
-                if(chanId !in countedChannelsCache.countedChannelMessages) {
-
-                    /* Caching... */
-                    val antMsg = countMessages(interaction.getChannel().id, kord)
-                    countedChannelsCache.countedChannelMessages[chanId] = antMsg // adds messages
-
-                    val channel = kord.getChannel(chanId)
-                    val lastMsg = channel?.data?.lastMessageId!!.value!!
-                    countedChannelsCache.countedChannelLastIdOnCall[chanId] = lastMsg
-
-
-                    channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
-                    /* TODO: Add to hashmap */
-
-                } else {
-
-                    val lastMsg = countedChannelsCache.countedChannelLastIdOnCall[chanId]!!
-                    val antMsg = countMessagesAfter(chanId, kord, lastMsg)
-
-                    val channel = kord.getChannel(chanId)
-                    val newLastMessage = channel?.data?.lastMessageId!!.value!!
-                    countedChannelsCache.countedChannelLastIdOnCall[chanId] = newLastMessage
-
-                    countedChannelsCache.countedChannelMessages[chanId] = countedChannelsCache.countedChannelMessages[chanId]!! + antMsg
-                    channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
-
-                    /* TODO: Update hashmap cache */
-
-                }
             }
         }
     }
@@ -94,28 +65,22 @@ class ChatInputCommandInteraction(
                     maby have a create embeded, and then an edit embeded function
                  */
                 val channels = guildService.getGuildChannels(guildId)
-                println("log 1 ")
 
-                channels.filter { guildChannel ->
+                val textChannels = channels.filter { guildChannel ->
                     guildChannel.type == ChannelType.GuildText
                 }
-                println("log 2 ")
 
-                channels.forEach{ guildChannel ->
-                    println("guildChannel: $guildChannel")
-                    println("guildChannelID: ${guildChannel.id}")
-                    countWithParams(guildChannel.id)
-
+                textChannels.forEach{ guildChannel ->
+                    counting(guildChannel.id, false)
+                    // println(guildChannel)
                 }
 
-                println("log 3 ")
+                println("worked!")
 
+                countedChannelsCache.countedChannelName.forEach{id, name->
+                    println("name: $name and amountOfmsg: ${countedChannelsCache.countedChannelMessages[id]}")
 
-                countedChannelsCache.countedChannelMessages.forEach {println(it)}
-
-                println("log 4 ")
-
-
+                }
 
             }
         }
@@ -231,7 +196,7 @@ class ChatInputCommandInteraction(
         // println("lastMsg typing er .. ${lastMsg.javaClass.name}")
 
         val messageCount = textChannelThread.getMessagesBefore(lastMsg)
-        val count = messageCount.count() + 1
+        val count = messageCount.count()
         return count
     }
 
@@ -251,9 +216,11 @@ class ChatInputCommandInteraction(
         return count
     }
 
-    private suspend fun countWithParams(chanId: Snowflake) {
-
+    private suspend fun counting(chanId: Snowflake, singleChannel: Boolean) {
+        /* TODO: create logs */
+        println("Entered counting")
         val channelForText = MyChannel(kord, chanId, restEntitySupplier)
+
         if(chanId !in countedChannelsCache.countedChannelMessages) {
 
             /* Caching... */
@@ -261,11 +228,20 @@ class ChatInputCommandInteraction(
             countedChannelsCache.countedChannelMessages[chanId] = antMsg // adds messages
 
             val channel = kord.getChannel(chanId)
+
+            // TODO: Fjern
+            println()
+
             val lastMsg = channel?.data?.lastMessageId!!.value!!
             countedChannelsCache.countedChannelLastIdOnCall[chanId] = lastMsg
 
 
-            channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
+            if(singleChannel) {
+                channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
+            }
+
+            countedChannelsCache.countedChannelName[chanId] = channel.data.name.value.toString()
+            /* TODO: Add to hashmap */
 
         } else {
 
@@ -277,7 +253,11 @@ class ChatInputCommandInteraction(
             countedChannelsCache.countedChannelLastIdOnCall[chanId] = newLastMessage
 
             countedChannelsCache.countedChannelMessages[chanId] = countedChannelsCache.countedChannelMessages[chanId]!! + antMsg
-            channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
+
+            /* TODO: Refactor */
+            if(singleChannel) {
+                channelForText.createMessage("Antall meldinger i kanalen: ${countedChannelsCache.countedChannelMessages[chanId]}")
+            }
         }
 
     }
