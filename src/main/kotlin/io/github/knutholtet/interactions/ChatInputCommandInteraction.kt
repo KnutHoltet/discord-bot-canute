@@ -56,26 +56,44 @@ class ChatInputCommandInteraction(
                 }
 
                 val guildId = interaction.data.guildId.value!!
-                /* TODO:
-                    Go through and find text channels, then call count command on each individual text channel
-                    make a private count command that takes channelId
-
-                    update realtime as each channel get's counted
-
-                    maby have a create embeded, and then an edit embeded function
-                 */
                 val channels = guildService.getGuildChannels(guildId)
 
                 val textChannels = channels.filter { guildChannel ->
                     guildChannel.type == ChannelType.GuildText
                 }
 
-                textChannels.forEach{ guildChannel ->
-                    counting(guildChannel.id, false)
-                    // println(guildChannel)
+                val message = kord.rest.channel.createMessage(channelId = interaction.getChannel().id) {
+                    embed {
+                        title = "Count all messages"
+                        description = "Counting every message in every channel ..."
+                        url = "" // TODO: Add link to repo
+                        color = Color(0x1ABC9C)
+
+                        field {
+                            name = "feild en"
+                            value = "verdi"
+                            inline = true
+                        }
+
+                        footer {
+                            text = "ligma"
+                            icon = "https://i.pinimg.com/564x/d6/0b/60/d60b60df9147a88c660bc1452385c3a7.jpg"
+                        }
+                    }
                 }
 
-                println("worked!")
+                val messageId = message.id
+
+
+
+
+
+
+
+                textChannels.forEach{ guildChannel ->
+                    counting(guildChannel.id, false)
+                }
+
 
                 countedChannelsCache.countedChannelName.forEach{id, name->
                     println("name: $name and amountOfmsg: ${countedChannelsCache.countedChannelMessages[id]}")
@@ -124,20 +142,19 @@ class ChatInputCommandInteraction(
                  */
                 val message = kord.rest.channel.createMessage(channelId = interaction.getChannel().id) {
                     embed {
-                        title = "Test"
-                        description = "funk for faen"
-                        url = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXgybGQyNjFkMzMybjBmY2FwazBsaDc0MjZ5ZDQyYzNqOGlmeXA3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3fQf1OEAq0iri9RC/giphy.webp"
+                        title = "Count all messages"
+                        description = "Counting every message in every channel ..."
+                        url = "" // TODO: Add link to repo
                         color = Color(0x1ABC9C)
-                        image = "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExeXgybGQyNjFkMzMybjBmY2FwazBsaDc0MjZ5ZDQyYzNqOGlmeXA3diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l3fQf1OEAq0iri9RC/giphy.webp"
 
-                        author {
-                            name = "ligma"
-                            // iconUrl = "https://i.pinimg.com/564x/d6/0b/60/d60b60df9147a88c660bc1452385c3a7.jpg"
-
+                        field {
+                            name = "test1"
+                            value = "verdi"
+                            inline = true
                         }
 
                         field {
-                            name = "feild en"
+                            name = "test2"
                             value = "verdi"
                             inline = true
                         }
@@ -170,7 +187,7 @@ class ChatInputCommandInteraction(
                         field {
                             name = "feild en"
                             value = "verdi"
-                            inline = true
+                            inline = false
                         }
 
                         footer {
@@ -183,6 +200,11 @@ class ChatInputCommandInteraction(
             }
         }
     }
+
+    private suspend fun editEmbeded(){
+
+    }
+
 
 
     private suspend fun countMessages(channelId: Snowflake, kord: Kord): Int {
