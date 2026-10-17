@@ -44,3 +44,11 @@ bin/
 
 ### Discord Bot Token ###
 Token.kt
+
+# Local music runtime
+lavalink/Lavalink.jar
+lavalink/plugins/
+lavalink/logs/
+.env
+__pycache__/
+*.pyc
