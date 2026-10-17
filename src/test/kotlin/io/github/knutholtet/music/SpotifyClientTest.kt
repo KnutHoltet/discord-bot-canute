@@ -40,7 +40,7 @@ class SpotifyClientTest {
             val spotify = SpotifyClient(http, "id", "secret", "refresh")
             assertEquals(2, spotify.playlist(url).size)
             assertEquals(2, spotify.playlist(url).size)
-            assertEquals(listOf("0", "1", "0", "1"), offsets)
+            assertEquals(listOf<String?>("0", "1", "0", "1"), offsets)
             assertEquals(1, tokens)
         } finally { http.close() }
     }
