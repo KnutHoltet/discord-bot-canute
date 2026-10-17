@@ -1,0 +1,17 @@
+# Start with Lavalink 4.2.2. Secrets are read from its process environment.
+server:
+  port: 2333
+  address: 127.0.0.1
+lavalink:
+  plugins:
+    - dependency: "dev.lavalink.youtube:youtube-plugin:1.18.2"
+  server:
+    password: "${LAVALINK_PASSWORD}"
+    sources:
+      youtube: false
+      http: false
+      local: false
+plugins:
+  youtube:
+    enabled: true
+    allowSearch: true
